@@ -8,8 +8,12 @@
 <title>index</title>
 </head>
 <body>
-	<!-- 메뉴1 -->
-	<!-- 메뉴2 -->
+	<jsp:include page="/WEB-INF/view/inc/mainMenu.jsp"></jsp:include>
+	<!-- 메뉴1 로그인/회원가입/내정보/장바구니(세션)-->
+	<!-- 추천(시간)/베스트셀러(주문량)-->
+	<!-- 메뉴2 카테고리-->
+	<!-- 캘린더(이달에 나온 책들) -->
+	
 	<h1>index</h1>
 	<%
 		List<Ebook> ebookList = (List<Ebook>)(request.getAttribute("ebookList"));

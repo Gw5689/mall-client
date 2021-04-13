@@ -37,5 +37,4 @@ public class IndexController extends HttpServlet {
 		RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/view/index.jsp");
 		rd.forward(request, response);
 	}
-
 }

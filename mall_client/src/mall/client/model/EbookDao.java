@@ -7,17 +7,20 @@ import java.util.List;
 import mall.client.commons.DBUtil;
 import mall.client.vo.Ebook;
 
-public class EbookDao { // Ebook 리스트
-	private DBUtil dbutil;
+public class EbookDao {
+	// 마리아db 연동
+	private DBUtil dbUtil;
+	// ebook 리스트 
 	public List<Ebook> selectEbookListByPage(int beginRow, int rowPerPage) {
 		List<Ebook> list = new ArrayList<>();
-		this.dbutil = new DBUtil();
+		this.dbUtil = new DBUtil();
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		
+		// 예외처리 
 		try {
-		conn = this.dbutil.getConnection();
+		conn = this.dbUtil.getConnection();
 		String sql = "SELECT ebook_title ebookTitle, ebook_price ebookPrice FROM ebook ORDER BY ebook_date DESC LIMIT ?,?";
 		stmt = conn.prepareStatement(sql);
 		stmt.setInt(1, beginRow);
@@ -32,8 +35,8 @@ public class EbookDao { // Ebook 리스트
 			}
 		} catch (Exception e) {
 			e.printStackTrace();	
-		} finally { // 순서대로 코드 넣기 (DB유틸에서 close 메소드 호출)
-			this.dbutil.close(rs, stmt, conn);
+		} finally { // 순서대로 코드 넣기 (DB유틸에서 close 메소드 호출) 먼저 힙 영역에서 청소해야함.
+			this.dbUtil.close(rs, stmt, conn);
 		}
 		return list;
 		
