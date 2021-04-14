@@ -36,7 +36,7 @@ public class CartDao {
 				map.put("cartDate", rs.getString("cartDate"));
 				list.add(map);
 			}
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			e.printStackTrace(); // 오류 메세지를 개발자에게 보여줌
 		} finally {
 			this.dbUtil.close(rs, stmt, conn); // 힙 영역에서 우선적으로 청소

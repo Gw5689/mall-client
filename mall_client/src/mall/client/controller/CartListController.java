@@ -35,5 +35,4 @@ public class CartListController extends HttpServlet {
 		RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/view/cart/cartList.jsp"); // 위임
 		rd.forward(request, response);
 	}
-
 }

@@ -18,22 +18,26 @@ public class DBUtil {
 	
 	// 2. db자원 (conn, stmt, rs) 해제 , 모든 참조타입은 힙 영역에 만들어지고 힙 영역에 만들어진 것은 청소된다. 이때 먼저 청소해야 할 것들을 먼저 청소해야 함.
 	public void close(ResultSet rs, PreparedStatement stmt, Connection conn) {	// 예외처리 할 수 있게 만듦.
-		try {
-			rs.close();
-		} catch (Exception e) {
-			e.printStackTrace();
+		if(rs != null) { // null이 아닐때만 close
+			try {
+				rs.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+				}
 		}
-		
-		try {
-			stmt.close();
-		} catch (Exception e) {
-			e.printStackTrace();
+		if(stmt != null) {
+			try {
+				stmt.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
-		
-		try {
-			conn.close();
-		} catch (Exception e) {
-			e.printStackTrace();
+		if(conn != null) {
+			try {
+				conn.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 }

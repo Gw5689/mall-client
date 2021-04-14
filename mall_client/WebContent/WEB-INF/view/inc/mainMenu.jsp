@@ -14,6 +14,10 @@
 		</form>
 	</div>
 	
+	<ul>
+		<!-- (C)InsertClientController -> (V)/view/client/insertclient.jsp-->
+		<li><a href="<%=request.getContextPath()%>/InsertClientController">회원가입</a></li>
+	</ul>
 <%		
 	} else {
 %>
@@ -24,9 +28,11 @@
 		</div>
 		
 		<ul>
+			<!-- (C)ClientOneController -> ClientDao.selectClientOne -> (V) /view/client/clientOne.jsp--> 
 			<li><a href="<%=request.getContextPath()%>/IndexController">HOME</a></li>
-			<li><a href="<%=request.getContextPath()%>/LogoutController">로그아웃</a></li>
 			<li><a href="<%=request.getContextPath()%>/CartListController">장바구니</a></li>
+			<li><a href="<%=request.getContextPath()%>/ClientOneController">회원정보</a></li>
+			<li><a href="<%=request.getContextPath()%>/LogoutController">로그아웃</a></li>
 		</ul>
 	</div>
 	
