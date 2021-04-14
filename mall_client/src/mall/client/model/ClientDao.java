@@ -18,7 +18,7 @@ public class ClientDao {
 		
 		try {
 			conn = this.dbUtil.getConnection();
-			String sql = "SELECT client_mail, client_date FROM client WHERE client_mail=?";
+			String sql = "SELECT client_no clientNo, client_mail clientMail, client_date clientDate FROM client WHERE client_mail=?";
 			stmt = conn.prepareStatement(sql);
 			stmt.setString(1, clientMail);
 			// 디버깅
@@ -26,6 +26,7 @@ public class ClientDao {
 			rs = stmt.executeQuery();
 			
 			if(rs.next()) {
+				returnClient.setClientNo(rs.getInt("client_no"));
 				returnClient.setClientMail(rs.getString("client_mail"));
 				returnClient.setClientDate(rs.getString("client_date"));
 			}

@@ -15,16 +15,25 @@
 	Client clientOne = (Client)(request.getAttribute("clientOne"));
 %>
 	<h1>회원정보</h1>
+	
 	<table border="1">
-		<tr>
-			<td>clientMail</td>
-			<td>clientDate</td>
-		</tr>
-		
-		<tr>
-			<td><%=clientOne.getClientMail() %></td>
-			<td><%=clientOne.getClientDate() %></td>
-		</tr>
+		<thead>
+			<tr>
+				<th>clientNo</th>
+				<th>clientMail</th>
+				<th>clientDate</th>
+			</tr>
+		</thead>
+		<tbody>	
+			<tr>
+				<td><%=clientOne.getClientNo() %></td>
+				<td><%=clientOne.getClientMail() %></td>
+				<td><%=clientOne.getClientDate() %></td>
+			</tr>
+		</tbody>
 	</table>
+	
+	<a href=""><button type="button">비밀번호 수정</button></a>
+	<a href=""><button type="button">회원탈퇴</button></a>
 </body>
 </html>
