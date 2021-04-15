@@ -17,23 +17,24 @@
 	<h1>회원정보</h1>
 	
 	<table border="1">
-		<thead>
+		
 			<tr>
 				<th>clientNo</th>
-				<th>clientMail</th>
-				<th>clientDate</th>
-			</tr>
-		</thead>
-		<tbody>	
-			<tr>
 				<td><%=clientOne.getClientNo() %></td>
-				<td><%=clientOne.getClientMail() %></td>
-				<td><%=clientOne.getClientDate() %></td>
 			</tr>
-		</tbody>
+			<tr>
+				<th>clientMail</th>
+				<td><%=clientOne.getClientMail() %></td>
+			</tr>
+			<tr>
+				<th>clientDate</th>
+				<td><%=clientOne.getClientDate() %></td>
+			</tr>		
 	</table>
-	
-	<a href=""><button type="button">비밀번호 수정</button></a>
-	<a href=""><button type="button">회원탈퇴</button></a>
+	<!-- UpdateClientPwController.doGet() -> updateClientPw.jsp -->
+	<!-- UpdateClientPwController -> ClientDao.updateClientPw() 리턴0,1 ->session.invalidate() -> redirect:/IndexController -->
+	<a href="<%=request.getContextPath()%>/UpdateClientPwController"><button type="button">비밀번호 수정</button></a>
+	<!-- DeleteClientController ->CartDao.deleteCartByClient(mail), ClientDao.deleteClientPw() 리턴0,1 ->session.invalidate() -> redirect:/IndexController -->
+	<a href="<%=request.getContextPath()%>/DeleteClientController"><button type="button">회원탈퇴</button></a>
 </body>
 </html>

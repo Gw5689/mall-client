@@ -9,6 +9,111 @@ import mall.client.vo.Cart;
 
 public class CartDao {
 	private DBUtil dbUtil;
+	
+	// 회원탈퇴를 위한 장바구니 삭제 메소드
+	public void deleteCartByClient(String clientMail) {
+		this.dbUtil = new DBUtil();
+		//초기화
+		Connection conn = null;
+		PreparedStatement stmt = null;
+
+		try {
+			conn = this.dbUtil.getConnection();
+			String sql = "DELETE from cart WHERE client_mail =?";
+			stmt = conn.prepareStatement(sql);
+			stmt.setString(1, clientMail);
+			//디버깅
+			System.out.println(stmt+"CartDao deleteCartByClient stmt");
+			stmt.executeUpdate();			
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			this.dbUtil.close(null, stmt, conn);
+		}
+
+	}
+	
+	public int deleteCart(Cart cart) {
+		int rowCnt = 0;
+		this.dbUtil = new DBUtil();
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		
+		try { 
+			//db 연동
+			conn = this.dbUtil.getConnection();
+			String sql = "DELETE FROM cart WHERE ebook_no=?";
+			stmt = conn.prepareStatement(sql);
+			stmt.setInt(1, cart.getEbookNo());
+			//디버깅
+			System.out.println(stmt+"<-- CartDao deleteCart stmt");
+			rowCnt = stmt.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace(); // 오류 메세지를 개발자에게 보여줌
+		} finally {
+			this.dbUtil.close(null, stmt, conn); // 힙 영역에서 우선적으로 청소
+		}
+		
+		return rowCnt;
+	}
+	
+	public boolean selectClientMail(Cart cart) {
+		boolean flag = true; // true 면 중복없음 (사용가능)
+		this.dbUtil = new DBUtil();
+		// 초기화
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+
+		//try/catch문
+		try { 
+			//db 연동
+			conn = this.dbUtil.getConnection();
+			String sql = "SELECT * FROM cart WHERE client_mail=? AND ebook_no=?";
+			stmt = conn.prepareStatement(sql);
+			stmt.setString(1, cart.getClientMail());
+			stmt.setInt(2, cart.getEbookNo());
+			// 디버깅
+			System.out.println(stmt+"<--CartDao selectClientMail stmt");
+			rs = stmt.executeQuery();
+			
+			if(rs.next()) {
+				flag=false; // fales면 중복된 ebook이 있다.
+			}
+		} catch (Exception e) {
+			e.printStackTrace(); // 오류 메세지를 개발자에게 보여줌
+		} finally {
+			this.dbUtil.close(rs, stmt, conn); // 힙 영역에서 우선적으로 청소
+		}
+		// 리턴
+		return flag;
+	}
+	
+	public int insertCart(Cart cart) {
+		int rowCnt = 0;
+		this.dbUtil = new DBUtil();
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		
+		try { 
+			//db 연동
+			conn = this.dbUtil.getConnection();
+			String sql = "INSERT INTO cart(client_mail, ebook_no, cart_date) VALUES(?,?,NOW())";
+			stmt = conn.prepareStatement(sql);
+			stmt.setString(1, cart.getClientMail());
+			stmt.setInt(2, cart.getEbookNo());
+			//디버깅
+			System.out.println(stmt+"<-- CartDao insertCart stmt");
+			rowCnt = stmt.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace(); // 오류 메세지를 개발자에게 보여줌
+		} finally {
+			this.dbUtil.close(null, stmt, conn); // 힙 영역에서 우선적으로 청소
+		}
+		
+		return rowCnt;
+	}
+	
 	public List<Map<String, Object>> selectCartList(String clientMail) {
 		this.dbUtil = new DBUtil();
 		// 초기화

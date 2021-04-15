@@ -8,6 +8,53 @@ import mall.client.vo.Client;
 public class ClientDao { 
 	private DBUtil dbUtil;
 	
+	//회원탈퇴 메소드
+	public void deleteClient(String clientMail) {
+		this.dbUtil = new DBUtil();
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		//db연결 insert
+		try {
+			conn = this.dbUtil.getConnection();
+			String sql="DELETE FROM client WHERE client_mail=?";
+			stmt = conn.prepareStatement(sql);
+			stmt.setString(1, clientMail);
+			//디버깅
+			System.out.println(stmt+"ClientDao deleteClient stmt");
+			stmt.executeUpdate();
+
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			this.dbUtil.close(null, stmt, conn);
+		}
+
+		}
+	
+	//비밀번호 변경
+	public void updateClientPw(Client client) {
+		this.dbUtil = new DBUtil();
+		//초기화
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		
+		try {
+			conn = this.dbUtil.getConnection();
+			String sql="UPDATE client SET client_pw=PASSWORD(?) WHERE client_mail=?";
+			stmt = conn.prepareStatement(sql);
+			stmt.setString(1, client.getClientPw());
+			stmt.setString(2, client.getClientMail());
+			// 디버깅
+			System.out.println(stmt+"<-- CluentDao updateClientPw stmt");
+			stmt.executeUpdate();
+
+		} catch(Exception e) {
+			e.printStackTrace(); // 오류메세지를 개발자에게 보여줌
+		} finally { // 힙 영역에서 우선적으로 청소
+			this.dbUtil.close(null, stmt, conn);
+		}
+	}
+	
 	public Client selectClientOne(String clientMail) {
 		Client returnClient = new Client();
 		this.dbUtil = new DBUtil();
