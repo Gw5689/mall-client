@@ -25,9 +25,27 @@ public class OrdersListController extends HttpServlet {
 			response.sendRedirect(request.getContextPath()+"/IndexController");
 			return;
 		}
+		
 		Client client = (Client)session.getAttribute("loginClient");
-		List<Map<String, Object>> ordersList = this.ordersDao.selectOrdersListByClient(client.getClientNo());
+		//페이징
+		int currentPage = 1;
+		if(request.getParameter("currentPage") != null) {
+			currentPage = Integer.parseInt(request.getParameter("currentPage"));
+		}
+		int rowPerPage = 15;
+		int beginRow = (currentPage - 1)*rowPerPage;
+
+		//최종 페이지
+		int totalRow = ordersDao.totalCount(client);
+		int lastPage = totalRow/rowPerPage;
+		if(totalRow % rowPerPage != 0){
+			lastPage +=1;
+		}
+		
+		List<Map<String, Object>> ordersList = this.ordersDao.selectOrdersListByClient(beginRow, rowPerPage, client);
 		// request에 키,값 넣기
+		request.setAttribute("lastPage", lastPage);
+		request.setAttribute("currentPage", currentPage);
 		request.setAttribute("ordersList", ordersList);
 		request.getRequestDispatcher("/WEB-INF/view/orders/ordersList.jsp").forward(request, response);// 포워딩
 	}

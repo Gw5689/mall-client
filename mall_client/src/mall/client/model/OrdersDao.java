@@ -9,12 +9,42 @@ import java.util.List;
 import java.util.Map;
 
 import mall.client.commons.DBUtil;
+import mall.client.vo.Client;
 import mall.client.vo.Orders;
 
 public class OrdersDao {
 	private DBUtil dbUtil;
 	
-	public List<Map<String, Object>> selectOrdersListByClient(int clienttNo) {
+	//
+	public int totalCount(Client client) {
+		int cnt = 0;
+		//전처리
+		this.dbUtil = new DBUtil();
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		//db연결
+		try {
+			conn = this.dbUtil.getConnection();
+			String sql ="SELECT COUNT(*) cnt From orders WHERE client_no = ? ";
+			stmt = conn.prepareStatement(sql);
+			stmt.setInt(1, client.getClientNo());
+			System.out.printf("stmt: %s<OrdersDao.totalCount()>\n", stmt);
+			rs = stmt.executeQuery();
+
+			if(rs.next()) {
+				cnt = rs.getInt("cnt");
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			this.dbUtil.close(rs, stmt, conn);
+		}
+
+		return cnt;
+	}
+	
+	public List<Map<String, Object>> selectOrdersListByClient(int beginRow, int rowPerPage,Client client) {
 		List<Map<String, Object>> list = new ArrayList<>(); // 다형성
 		this.dbUtil = new DBUtil();
 		// 초기화
@@ -24,12 +54,15 @@ public class OrdersDao {
 		
 		try {
 			conn = this.dbUtil.getConnection();
-			String sql = "SELECT o.orders_no ordersNo, o.ebook_no ebookNo, o.orders_date ordersDate, o.orders_state ordersState, e.ebook_title ebookTitle, e.ebook_price ebookPrice FROM orders o INNER JOIN ebook e ON o.ebook_no = e.ebook_no WHERE o.client_no = ?";
+			String sql = "SELECT o.orders_no ordersNo, o.ebook_no ebookNo, o.orders_state ordersState, e.ebook_title ebookTitle, e.ebook_price ebookPrice, o.orders_date ordersDate FROM orders o INNER JOIN ebook e ON o.ebook_no = e.ebook_no WHERE o.client_no=? ORDER BY o.orders_date DESC LIMIT ?,?";
 			stmt = conn.prepareStatement(sql);
-			stmt.setInt(1, clienttNo);
+			stmt.setInt(1, client.getClientNo());
+			stmt.setInt(2, beginRow);
+			stmt.setInt(3, rowPerPage);
 			//디버깅
 			System.out.println(stmt+"<--OrdersDao selectOrdersListByClient stmt");
 			rs = stmt.executeQuery();
+			
 			
 			// 반복문 실행
 			while(rs.next()) { 
@@ -59,7 +92,7 @@ public class OrdersDao {
 		PreparedStatement stmt = null;
 		
 		try {
-			conn = dbUtil.getConnection();
+			conn = this.dbUtil.getConnection();
 			String sql = "INSERT INTO orders(ebook_no, client_no, orders_date, orders_state) VALUES(?, ?, NOW(), '주문완료')";
 			stmt = conn.prepareStatement(sql);
 			stmt.setInt(1, orders.getEbookNo());

@@ -34,12 +34,17 @@ public class InsertOrdersController extends HttpServlet {
 		//request
 		int ebookNo = Integer.parseInt(request.getParameter("ebookNo"));
 		Client client = (Client)session.getAttribute("loginClient");
+		
 		Orders orders = new Orders();
-		orders.setEbookNo(ebookNo);
 		orders.setClientNo(client.getClientNo());
+		orders.setEbookNo(ebookNo);
+		
+		
 		Cart cart = new Cart();
 		cart.setClientMail(client.getClientMail());
 		cart.setEbookNo(ebookNo);
+		// 디버깅
+		System.out.println(cart.toString()+"<--InsertOrdersController 카트");
 		
 		//dao 호출
 		// insert 후 delete되기 전 DB에 문제가 생기면 -> 롤백(insert도 취소) -> 트랜잭션처리 
