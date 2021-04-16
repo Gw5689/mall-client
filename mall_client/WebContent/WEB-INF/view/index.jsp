@@ -23,7 +23,10 @@
 		int lastPage = (int)request.getAttribute("lastPage");
 		
 		// 검색창
-		String categoryName = (String)request.getAttribute("categoryName");
+		String categoryName = null;
+		if(request.getAttribute("categoryName") != null){
+			categoryName = (String)request.getAttribute("categoryName");
+		}
 		String searchWord = null;
 		
 		if(request.getAttribute("searchWord") !=null) {
@@ -62,7 +65,7 @@
 						<a href="<%=request.getContextPath()%>/EbookOneController?ebookNo=<%=ebook.getEbookNo()%>"><%=ebook.getEbookTitle()%></a>
 					</div>
 					
-					<div>￦<%=ebook.getEbookPrice()%></div>
+					<div>>&#8361;<%=ebook.getEbookPrice()%></div>
 				</td>
 		<%		
 			if(i%5==0){

@@ -128,7 +128,7 @@ public class CartDao {
 		try { 
 			//db 연동
 			conn = this.dbUtil.getConnection();
-			String sql = "SELECT c.cart_no cartNo, e.ebook_no ebookNo, e.ebook_title ebookTitle, c.cart_date cartDate FROM cart c INNER JOIN ebook e ON c.ebook_no = e.ebook_no WHERE c.client_mail=?";
+			String sql = "SELECT c.cart_no cartNo, e.ebook_price ebookPrice, e.ebook_no ebookNo, e.ebook_title ebookTitle, c.cart_date cartDate FROM cart c INNER JOIN ebook e ON c.ebook_no = e.ebook_no WHERE c.client_mail=?";
 			stmt = conn.prepareStatement(sql);
 			stmt.setString(1, clientMail);
 			rs = stmt.executeQuery();
@@ -136,6 +136,7 @@ public class CartDao {
 			while(rs.next()) { // 반복문 실행
 				Map<String, Object> map = new HashMap<>();
 				map.put("cartNo", rs.getInt("cartNo"));
+				map.put("ebookPrice", rs.getInt("ebookPrice"));
 				map.put("ebookNo", rs.getInt("ebookNO"));
 				map.put("ebookTitle", rs.getString("ebookTitle"));
 				map.put("cartDate", rs.getString("cartDate"));

@@ -50,7 +50,7 @@ public class IndexController extends HttpServlet {
 		List<String> categoryList = this.categoryDao.categoryList();
 		
 		// View forward
-		request.setAttribute("categoryName", ebook.getCategoryName());
+		request.setAttribute("categoryName", categoryName);
 		request.setAttribute("categoryList", categoryList);
 		request.setAttribute("lastPage", lastPage);
 		request.setAttribute("currentPage", currentPage);
