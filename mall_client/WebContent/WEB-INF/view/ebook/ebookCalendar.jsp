@@ -64,7 +64,7 @@
 	            			if(i == (Integer)m.get("d")) {
 	            	%>
 	            		<div>
-	            			<a href="<%=request.getContextPath()%>">
+	            			<a href="<%=request.getContextPath()%>/EbookOneController?ebookNo=<%=m.get("ebookNo")%>">
 	            				<%
 	            					String ebookTitle = (String)m.get("ebookTitle");
 	            					if(ebookTitle.length() > 10) {
