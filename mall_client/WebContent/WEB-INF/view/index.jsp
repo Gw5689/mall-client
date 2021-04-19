@@ -16,6 +16,7 @@
 	
 	<h1>index</h1>
 	<%
+	List<Map<String, Object>> bestOrdersList = (List<Map<String, Object>>)(request.getAttribute("bestOrdersList"));
 		List<Ebook> ebookList = (List<Ebook>)(request.getAttribute("ebookList"));
 		
 		// 페이징
@@ -44,11 +45,39 @@
 		}
 	%>
 	<!-- 검색창 -->
-	<form action="<%=request.getContextPath()%>/SearchIndexController" method="post">
+	<form action="<%=request.getContextPath()%>/IndexController" method="post">
 		<input type="text" name="searchWord" placeholder="ebookTitle">
 		<button type="submit">검색</button>
 	</form>
 	
+	<!-- 베스트 ebook 상품 (최대 5개) -->
+	<h3>베스트 상품</h3>
+	<table border="1">
+		<tr>
+			<%
+				for(Map m : bestOrdersList) {
+			%>
+					<td>
+						<div><img src="<%=request.getContextPath()%>/img/default.jpg"></div>
+						<!-- EbookOneController - EbookDao.selectEbookOne() - ebookOne.jsp -->
+						<div>
+							<a href="<%=request.getContextPath()%>/EbookOneController?ebookNo=<%=m.get("ebookNo")%>">
+								<%=m.get("ebookTitle")%>
+							</a>
+						</div>
+
+						<div>￦<%=m.get("ebookPrice")%></div>
+					</td>
+			<%		
+				}
+			%>
+		</tr>
+	</table>
+	
+	
+	
+	<!-- ebook상품 출력 테이블 -->
+	<h3>Ebook 리스트</h3>
 	<table border="1">
 		<tr>
 		<%
@@ -88,7 +117,7 @@
 	<%
 				} else{
 	%>
-					<a href="<%=request.getContextPath()%>/SearchIndexController?currentPage=<%=currentPage-1%>&searchWord=<%=searchWord%>">이전</a>
+					<a href="<%=request.getContextPath()%>/IndexController?currentPage=<%=currentPage-1%>&searchWord=<%=searchWord%>">이전</a>
 	<%
 				}
 			} else{
@@ -106,7 +135,7 @@
 	<%	
 				} else{
 	%>
-				<a href="<%=request.getContextPath()%>/SearchIndexController?currentPage=<%=currentPage+1%>&searchWord=<%=searchWord%>">다음</a>
+				<a href="<%=request.getContextPath()%>/IndexController?currentPage=<%=currentPage+1%>&searchWord=<%=searchWord%>">다음</a>
 	<%	
 				}
 			}else{

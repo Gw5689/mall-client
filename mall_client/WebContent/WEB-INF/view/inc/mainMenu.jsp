@@ -17,6 +17,7 @@
 	<ul>
 		<!-- (C)InsertClientController -> (V)/view/client/insertclient.jsp-->
 		<li><a href="<%=request.getContextPath()%>/InsertClientController">회원가입</a></li>
+		<li><a href="<%=request.getContextPath()%>/EbookCalendarController">Ebook 달력</a></li>
 	</ul>
 <%		
 	} else {

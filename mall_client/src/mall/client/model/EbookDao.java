@@ -1,11 +1,12 @@
 package mall.client.model;
 
 import java.sql.Connection;
-
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import mall.client.commons.DBUtil;
 import mall.client.vo.Ebook;
@@ -13,6 +14,40 @@ import mall.client.vo.Ebook;
 public class EbookDao {
 	// 마리아db 연동
 	private DBUtil dbUtil;
+	
+	public List<Map<String, Object>> selectEbookListByMonth(int year, int month) {
+		List<Map<String, Object>> list = new ArrayList<>();
+		this.dbUtil = new DBUtil();
+		//초기화
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+
+		try {
+			conn = this.dbUtil.getConnection();
+			String sql = "SELECT ebook_no ebookNo, ebook_title ebookTitle, DAY(ebook_date) d FROM ebook WHERE YEAR(ebook_date) = ? AND MONTH(ebook_date) = ? ORDER BY day(ebook_date) ASC";
+			stmt = conn.prepareStatement(sql);	
+			stmt.setInt(1, year);
+			stmt.setInt(2, month);
+			// 디버깅
+			System.out.println(stmt+"EbookDao selectEbookListByDay stmt");
+			rs = stmt.executeQuery();
+			while(rs.next()) {
+				Map<String, Object> map = new HashMap<>();
+				map.put("ebookNo", rs.getInt("ebookNo"));
+				map.put("ebookTitle", rs.getString("ebookTitle"));
+				map.put("d", rs.getInt("d"));
+				list.add(map);
+			}			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {//try절에서 예외가 발생해서 catch절로 가든 가지 않던 finally는 실행된다.
+			System.out.println(stmt);
+			this.dbUtil.close(rs, stmt, conn);
+		}
+		return list;
+	}
+	
 	
 	// 검색 키워드 ebook 목록
 	public List<Ebook> selectSearchEbookListByPage(int beginRow, int rowPerPage, String searchWord){

@@ -2,6 +2,7 @@ package mall.client.controller;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -12,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import mall.client.model.CategoryDao;
 import mall.client.model.EbookDao;
+import mall.client.model.OrdersDao;
 import mall.client.vo.Ebook;
 
 // C -> M -> view
@@ -19,6 +21,7 @@ import mall.client.vo.Ebook;
 public class IndexController extends HttpServlet {
 	private EbookDao ebookDao;
 	private CategoryDao categoryDao;
+	private OrdersDao ordersDao;
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		this.ebookDao = new EbookDao();
 		this.categoryDao = new CategoryDao();
@@ -30,6 +33,12 @@ public class IndexController extends HttpServlet {
 			categoryName = request.getParameter("categoryName");
 		}
 		
+		// 검색창
+		String searchWord = null;
+		if(request.getParameter("searchWord") != null) {
+			 searchWord = request.getParameter("searchWord");
+		}
+		
 		// request 분석
 		//페이징
 		int currentPage = 1;
@@ -39,25 +48,93 @@ public class IndexController extends HttpServlet {
 		int rowPerPage = 15;
 		int beginRow = (currentPage - 1)*rowPerPage;
 		
-		int totalRow = ebookDao.totalCount(categoryName);
-		int lastPage = totalRow/rowPerPage;
-		if(totalRow % rowPerPage != 0) {
-			lastPage ++;
-		}
 		// Dao 호출
-		List<Ebook> ebookList = this.ebookDao.selectEbookListByPage(beginRow, rowPerPage, categoryName);
+		if(request.getParameter("searchWord") != null) {//검색어가 없을경우
+
+			int totalRow = ebookDao.searchTotalCount(searchWord);
+			System.out.println("totalRow: "+ totalRow + "<SearchIndexController>");
+			int lastPage = totalRow/rowPerPage;
+			if(totalRow % rowPerPage != 0){
+				lastPage +=1;
+			}
+
+		//model 호출
+		List<Ebook> ebookList = this.ebookDao.selectSearchEbookListByPage(beginRow, rowPerPage, searchWord);
+
+			request.setAttribute("lastPage", lastPage);
+			request.setAttribute("ebookList", ebookList);
+		} else { // 검색어가 있을 경우
+			int totalRow = ebookDao.totalCount(categoryName);
+			int lastPage = totalRow/rowPerPage;
+			if(totalRow % rowPerPage != 0){
+				lastPage +=1;
+			}
+
+			//model 호출
+			this.ordersDao = new OrdersDao();
+			List<Ebook> ebookList = this.ebookDao.selectEbookListByPage(beginRow, rowPerPage, categoryName);
+
+			request.setAttribute("lastPage", lastPage);
+			request.setAttribute("ebookList", ebookList);
+		}
 		// 카테고리 리스트
 		List<String> categoryList = this.categoryDao.categoryList();
+		// 베스트 상품 리스트
+		List<Map<String, Object>> bestOrdersList = this.ordersDao.selectBestOrdersList();
 		
 		// View forward
+		request.setAttribute("bestOrdersList", bestOrdersList);
+		request.setAttribute("searchWord", searchWord);
 		request.setAttribute("categoryName", categoryName);
 		request.setAttribute("categoryList", categoryList);
-		request.setAttribute("lastPage", lastPage);
 		request.setAttribute("currentPage", currentPage);
-		request.setAttribute("ebookList", ebookList);
 		RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/view/index.jsp");
 		rd.forward(request, response);
+		}
+		
+		protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+			request.setCharacterEncoding("UTF-8");
+			this.ebookDao = new EbookDao();
+			this.categoryDao = new CategoryDao();
+			Ebook ebook = new Ebook();
+			//request 처리
+			//검색기능
+			String searchWord = request.getParameter("searchWord");
+			//카테고리 - 호환x
+			String categoryName = null;
+
+			//페이징
+			int currentPage = 1;
+
+			int rowPerPage = 15;
+			int beginRow = (currentPage - 1)*rowPerPage;
+
+			//마지막 페이지
+			int totalRow = ebookDao.searchTotalCount(searchWord);
+			System.out.println("totalRow: "+ totalRow + "<SearchIndexController>");
+			int lastPage = totalRow/rowPerPage;
+			if(totalRow % rowPerPage != 0){
+				lastPage +=1;
+			}
+
+			//model 호출
+			List<Ebook> ebookList = this.ebookDao.selectSearchEbookListByPage(beginRow, rowPerPage, searchWord);
+
+			//카테고리 리스트 호출
+			List<String> categoryList = this.categoryDao.categoryList();
+
+			//(View forward)index.jsp파일 연결
+			request.setAttribute("searchWord", searchWord);
+			request.setAttribute("categoryName", ebook.getCategoryName());
+			request.setAttribute("categoryList", categoryList);
+			request.setAttribute("lastPage", lastPage);
+			request.setAttribute("ebookList", ebookList);
+			request.setAttribute("currentPage", currentPage);
+			RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/view/index.jsp");
+			rd.forward(request, response);
+
 	}
+	
 }
 	
 
