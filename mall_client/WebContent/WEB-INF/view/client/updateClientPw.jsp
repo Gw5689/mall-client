@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -7,7 +8,7 @@
 </head>
 <body>
 	<h1>비밀번호 수정</h1>
-	<form action="<%=request.getContextPath()%>/UpdateClientPwController" method="post">
+	<form action="${pageContext.request.contextPath}/UpdateClientPwController" method="post">
 	<table>
 		<tr>
 			<td>새 비밀번호</td>

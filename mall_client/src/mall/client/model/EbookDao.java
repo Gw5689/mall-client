@@ -15,6 +15,7 @@ public class EbookDao {
 	// 마리아db 연동
 	private DBUtil dbUtil;
 	
+	// selectEbookListByMonth
 	public List<Map<String, Object>> selectEbookListByMonth(int year, int month) {
 		List<Map<String, Object>> list = new ArrayList<>();
 		this.dbUtil = new DBUtil();

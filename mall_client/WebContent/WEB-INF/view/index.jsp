@@ -1,6 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="java.util.*"%>
-<%@ page import="mall.client.vo.*"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -15,37 +14,17 @@
 	<!-- 캘린더(이달에 나온 책들) -->
 	
 	<h1>index</h1>
-	<%
-	List<Map<String, Object>> bestOrdersList = (List<Map<String, Object>>)(request.getAttribute("bestOrdersList"));
-		List<Ebook> ebookList = (List<Ebook>)(request.getAttribute("ebookList"));
-		
-		// 페이징
-		int currentPage = (int)request.getAttribute("currentPage");
-		int lastPage = (int)request.getAttribute("lastPage");
-		
-		// 검색창
-		String categoryName = null;
-		if(request.getAttribute("categoryName") != null){
-			categoryName = (String)request.getAttribute("categoryName");
-		}
-		String searchWord = null;
-		
-		if(request.getAttribute("searchWord") !=null) {
-			searchWord = (String)request.getAttribute("searchWord");
-		}
-		// 카테고리 목록
-		List<String> categoryList = (List<String>)(request.getAttribute("categoryList"));
-	%>
-			<a href="<%=request.getContextPath()%>/IndexController">전체보기</a>
-	<%
-		for(String cn : categoryList) {
-	%>
-			<a href="<%=request.getContextPath()%>/IndexController?categoryName=<%=cn%>"><%=cn %></a>
-	<%		
-		}
-	%>
+	
+	<!-- ebook 전체보기 -->
+	<a href="${pageContext.request.contextPath}/IndexController">전체보기</a>
+	
+	<!-- 카테고리별 목록보기 네이게이션 -->
+	<c:forEach var="cn" items="${categoryList}">
+		<a href="${pageContext.request.contextPath}/IndexController?categoryName=${cn}">${cn}</a>
+	</c:forEach>
+	
 	<!-- 검색창 -->
-	<form action="<%=request.getContextPath()%>/IndexController" method="post">
+	<form action="${pageContext.request.contextPath}/IndexController" method="get">
 		<input type="text" name="searchWord" placeholder="ebookTitle">
 		<button type="submit">검색</button>
 	</form>
@@ -54,23 +33,19 @@
 	<h3>베스트 상품</h3>
 	<table border="1">
 		<tr>
-			<%
-				for(Map m : bestOrdersList) {
-			%>
-					<td>
-						<div><img src="<%=request.getContextPath()%>/img/default.jpg"></div>
+			<c:forEach var="map" items="${bestOrdersList}">
+				<td>
+						<div><img src="${pageContext.request.contextPath}/img/default.jpg"></div>
 						<!-- EbookOneController - EbookDao.selectEbookOne() - ebookOne.jsp -->
 						<div>
-							<a href="<%=request.getContextPath()%>/EbookOneController?ebookNo=<%=m.get("ebookNo")%>">
-								<%=m.get("ebookTitle")%>
+							<a href="${pageContext.request.contextPath}/EbookOneController?ebookNo=${map.ebookNo}">
+								${map.ebookTitle}
 							</a>
 						</div>
 
-						<div>￦<%=m.get("ebookPrice")%></div>
+						<div>&#8361;${map.ebookPrice}</div>
 					</td>
-			<%		
-				}
-			%>
+			</c:forEach>
 		</tr>
 	</table>
 	
@@ -79,72 +54,51 @@
 	<!-- ebook상품 출력 테이블 -->
 	<h3>Ebook 리스트</h3>
 	<table border="1">
-		<tr>
-		<%
-			int i = 0;
-			for(Ebook ebook : ebookList) {
-				i++;
-		%>
-			
-				<td>
-					<div><img src="<%=request.getContextPath()%>/img/default.jpg"></div>
-					
-					<!-- EbookOneController -> EbookDao.selectEbookOne() -> view/EbookOne.jsp -->
-					<div>
-						<a href="<%=request.getContextPath()%>/EbookOneController?ebookNo=<%=ebook.getEbookNo()%>"><%=ebook.getEbookTitle()%></a>
-					</div>
-					
-					<div>>&#8361;<%=ebook.getEbookPrice()%></div>
-				</td>
-		<%		
-			if(i%5==0){
-		%>
-			</tr><tr>
-		<%		
-				}
-			}
-		%>
-		</tr>
+		<c:forEach begin="0" end="14" var="i" step="${i+5}">
+			<tr>
+				<c:forEach var="ebook" begin="${i }" end="${i+4 }" items="${ebookList }">
+					<td>
+						<div><img src="${pageContext.request.contextPath}/img/default.jpg"></div>
+						
+						<!-- EbookOneController -> EbookDao.selectEbookOne() -> view/EbookOne.jsp -->
+						<div>
+							<a href="${pageContext.request.contextPath}/EbookOneController?ebookNo=${ebook.ebookNo}">${ebook.ebookTitle }</a>
+						</div>
+						
+						<div>>&#8361;${ebook.ebookPrice }</div>
+					</td>
+				</c:forEach>
+			</tr>
+		</c:forEach>
 	</table>
 	
 	<!-- 페이징 -->
-	<%
-		if(currentPage > 1){
-			if(categoryName == null){
-				if(searchWord == null){
-	%>
-					<a href="<%=request.getContextPath()%>/IndexController?currentPage=<%=currentPage-1%>">이전</a>
-	<%
-				} else{
-	%>
-					<a href="<%=request.getContextPath()%>/IndexController?currentPage=<%=currentPage-1%>&searchWord=<%=searchWord%>">이전</a>
-	<%
-				}
-			} else{
-	%>
-			<a href="<%=request.getContextPath()%>/IndexController?currentPage=<%=currentPage-1%>&categoryName=<%=categoryName%>">이전</a>
-	<%
-			}
-		}
-	
-		if(currentPage < lastPage){
-			if(categoryName == null){
-				if(searchWord == null){
-	%>
-					<a href="<%=request.getContextPath()%>/IndexController?currentPage=<%=currentPage+1%>">다음</a>
-	<%	
-				} else{
-	%>
-				<a href="<%=request.getContextPath()%>/IndexController?currentPage=<%=currentPage+1%>&searchWord=<%=searchWord%>">다음</a>
-	<%	
-				}
-			}else{
-	%>	
-				<a href="<%=request.getContextPath()%>/IndexController?currentPage=<%=currentPage+1%>&categoryName=<%=categoryName%>">다음</a>
-	<%
-				}
-			}
-		
-	%>
+	<c:if test="${currentPage > 1}">
+		<c:if test="${categoryName == null}">
+			<c:if test="${searchWord == null}">
+				<a href="${pageContext.request.contextPath}/IndexController?currentPage=${currentPage-1}">이전</a>
+			</c:if>
+			<c:if test="${searchWord != null}">
+				<a href="${pageContext.request.contextPath}/IndexController?currentPage=${currentPage-1}&searchWord=${searchWord}">이전</a>
+			</c:if>
+		</c:if>
+		<c:if test="${categoryName != null}">
+			<a href="${pageContext.request.contextPath}/IndexController?currentPage=${currentPage-1}&categoryName=${categoryName}">이전</a>
+		</c:if>
+	</c:if>
+
+	<c:if test="${currentPage < lastPage}">
+		<c:if test="${categoryName == null}">
+			<c:if test="${searchWord == null}">
+				<a href="${pageContext.request.contextPath}/IndexController?currentPage=${currentPage+1}">다음</a>
+			</c:if>
+			<c:if test="${searchWord != null}">
+				<a href="${pageContext.request.contextPath}/IndexController?currentPage=${currentPage+1}&searchWord=${searchWord}">다음</a>
+			</c:if>
+		</c:if>
+		<c:if test="${categoryName != null}">
+			<a href="${pageContext.request.contextPath}/IndexController?currentPage=${currentPage+1}&categoryName=${categoryName}">다음</a>
+		</c:if>
+	</c:if>
 </body>
 </html>

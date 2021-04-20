@@ -25,6 +25,7 @@ public class IndexController extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		this.ebookDao = new EbookDao();
 		this.categoryDao = new CategoryDao();
+		this.ordersDao = new OrdersDao();
 		Ebook ebook = new Ebook();
 		
 		// 카테고리
@@ -77,6 +78,7 @@ public class IndexController extends HttpServlet {
 			request.setAttribute("lastPage", lastPage);
 			request.setAttribute("ebookList", ebookList);
 		}
+		
 		// 카테고리 리스트
 		List<String> categoryList = this.categoryDao.categoryList();
 		// 베스트 상품 리스트
@@ -90,49 +92,6 @@ public class IndexController extends HttpServlet {
 		request.setAttribute("currentPage", currentPage);
 		RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/view/index.jsp");
 		rd.forward(request, response);
-		}
-		
-		protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-			request.setCharacterEncoding("UTF-8");
-			this.ebookDao = new EbookDao();
-			this.categoryDao = new CategoryDao();
-			Ebook ebook = new Ebook();
-			//request 처리
-			//검색기능
-			String searchWord = request.getParameter("searchWord");
-			//카테고리 - 호환x
-			String categoryName = null;
-
-			//페이징
-			int currentPage = 1;
-
-			int rowPerPage = 15;
-			int beginRow = (currentPage - 1)*rowPerPage;
-
-			//마지막 페이지
-			int totalRow = ebookDao.searchTotalCount(searchWord);
-			System.out.println("totalRow: "+ totalRow + "<SearchIndexController>");
-			int lastPage = totalRow/rowPerPage;
-			if(totalRow % rowPerPage != 0){
-				lastPage +=1;
-			}
-
-			//model 호출
-			List<Ebook> ebookList = this.ebookDao.selectSearchEbookListByPage(beginRow, rowPerPage, searchWord);
-
-			//카테고리 리스트 호출
-			List<String> categoryList = this.categoryDao.categoryList();
-
-			//(View forward)index.jsp파일 연결
-			request.setAttribute("searchWord", searchWord);
-			request.setAttribute("categoryName", ebook.getCategoryName());
-			request.setAttribute("categoryList", categoryList);
-			request.setAttribute("lastPage", lastPage);
-			request.setAttribute("ebookList", ebookList);
-			request.setAttribute("currentPage", currentPage);
-			RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/view/index.jsp");
-			rd.forward(request, response);
-
 	}
 	
 }

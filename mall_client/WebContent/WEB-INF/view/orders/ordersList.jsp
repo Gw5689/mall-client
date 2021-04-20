@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="java.util.*"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -7,11 +7,7 @@
 <title>ordersList</title>
 </head>
 <body>
-<%
-	List<Map<String, Object>> ordersList = (List<Map<String, Object>>)request.getAttribute("ordersList");
-	int currentPage = (int)request.getAttribute("currentPage");
-	int lastPage = (int)request.getAttribute("lastPage");
-%>
+
 	<!-- 메인메뉴 인클루드 -->
 	<jsp:include page="/WEB-INF/view/inc/mainMenu.jsp"></jsp:include>
 	
@@ -22,36 +18,30 @@
 			<td>ebookNo</td>
 			<td>ordersDate</td>
 			<td>ordersState</td>
-			<td>ordersTitle</td>
-			<td>ordersPrice</td>
+			<td>ebookTitle</td>
+			<td>ebookPrice</td>
 		</tr>
-		<%
-			for(Map m : ordersList) {
-		%>
+		
+		<c:forEach var="m" items="${ordersList }">
 			<tr>
-				<td><%=(Integer)(m.get("ordersNo"))%></td>
-				<td><%=(Integer)(m.get("ebookNo"))%></td>
-				<td><%=((String)(m.get("ordersDate"))).substring(0,10)%></td>
-				<td><%=(String)(m.get("ordersState"))%></td>
-				<td><%=(String)(m.get("ebookTitle"))%></td>
-				<td><%=(Integer)(m.get("ebookPrice"))%></td>
+				<td>${m.ordersNo}</td>
+				<td>${m.ebookNo}</td>
+				<td>${m.ordersDate}</td>
+				<td>${m.ordersState}</td>
+				<td>${m.ebookTitle}</td>
+				<td>${m.ebookPrice}</td>
+
 			</tr>
-		<%		
-			}
-		%>
+		</c:forEach>
 	</table>
-	<%
-		if(currentPage > 1){
-	%>
-			<a href="<%=request.getContextPath()%>/OrdersListController?currentPage=<%=currentPage-1%>">이전</a>
-	<%
-		}
 	
-		if(currentPage < lastPage){
-	%>
-			<a href="<%=request.getContextPath()%>/OrdersListController?currentPage=<%=currentPage+1%>">다음</a>
-	<%
-		}
-	%>
+	<!-- 페이징 버튼 -->
+	<c:if test="${currentPage > 1 }">
+		<a href="${pageContext.request.contextPath}/OrdersListController?currentPage=${currentPage -1}">이전</a>
+	</c:if>
+
+	<c:if test="${currentPage < lastPage }">
+		<a href="${pageContext.request.contextPath}/OrdersListController?currentPage=${currentPage +1}">다음</a>
+	</c:if>
 </body>
 </html>
