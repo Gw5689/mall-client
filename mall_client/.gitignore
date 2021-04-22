@@ -15,7 +15,8 @@ local.properties
 .settings/
 .loadpath
 .recommenders
-
+WebContent/assets/
+WebContent/documentation/
 # External tool builders
 .externalToolBuilders/
 
@@ -70,3 +71,4 @@ local.properties
 .sts4-cache/
 
 # End of https://www.toptal.com/developers/gitignore/api/eclipse
+
